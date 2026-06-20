@@ -55,6 +55,23 @@
         <p>点击按钮逐级进入，查看具体法条</p>
     </div>
     <div class="btn-container" id="btnContainer"></div>
+    <div id="contentBox" style="
+    width: 90vw; max-width: 400px;
+    margin: 20px auto 0 auto;
+    padding: 15px;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid #999; border-radius: 8px;
+    font-size: 4vw; color: #333;
+    display: none; white-space: pre-wrap; word-break: break-word;
+    text-align: left;
+">
+    <div id="lawText"></div>
+    <button id="copyBtn" style="
+        margin-top: 10px; padding: 6px 12px;
+        background: #eee; border: 1px solid #999; border-radius: 4px;
+        font-size: 3.5vw; cursor: pointer;
+    ">📋 复制全文</button>
+</div>
 
     <script>
         let currentPath = [];
