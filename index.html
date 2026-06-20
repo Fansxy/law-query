@@ -137,7 +137,7 @@
                 btn.onclick = () => {
                    if (currentPath.length === 3) {
                        let key = currentPath[0] + '||' + currentPath[1] + '||' + currentPath[2] + '||' + item;
-                       let content = treeData.Content[key] || '（暂无详细内容）';
+                       let content = treeData.content[key] || '（暂无详细内容）';
                        // 显示在下方区域
                        document.getElementById('lawText').innerText = content;
                        document.getElementById('contentBox').style.display = 'block';
