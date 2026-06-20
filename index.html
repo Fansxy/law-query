@@ -137,7 +137,7 @@
                     if (currentPath.length === 3) {
                         // 第四级：显示内容
                         let key = currentPath[0] + '||' + currentPath[1] + '||' + currentPath[2] + '||' + item;
-                        let content = treeData.Content[key] || '（暂无详细内容）';
+                        let content = treeData.content[key] || '（暂无详细内容）';
                         alert(content);
                     } else {
                         currentPath.push(item);
