@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>法条查询系统</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            width: 100vw; height: 100vh;
+            background: url('law-query.jpg') center/cover no-repeat;
+            font-family: "微软雅黑", sans-serif;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+        .title-box {
+            position: absolute; top: 30px; text-align: center;
+            color: #222; text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+        .title-box h1 { font-size: 7vw; margin-bottom: 5px; }
+        .title-box p { font-size: 4vw; color: #555; }
+        .btn-container {
+            display: flex; flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            max-height: 70vh; overflow-y: auto;
+        }
+        .menu-btn {
+            width: 80vw; max-width: 300px;
+            padding: 12px 5px; margin: 6px 0;
+            background: rgba(255,255,255,0.85);
+            border: 2px solid #999; border-radius: 8px;
+            font-size: 5vw; color: #333;
+            white-space: normal; word-break: break-all;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .back-btn {
+            position: absolute; top: 30px; left: 20px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.85);
+            border: 1px solid #999; border-radius: 6px;
+            font-size: 4vw; cursor: pointer;
+        }
+        .tip {
+            font-size: 5vw; color: gray;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="title-box">
+        <h1>法条查询系统</h1>
+        <p>点击按钮逐级进入，查看具体法条</p>
+    </div>
+    <div class="btn-container" id="btnContainer"></div>
+
+    <script>
+        let currentPath = [];
+        let treeData = {};
+
+        // 加载 data.json
+        fetch('data.json')
+            .then(res => res.json())
+            .then(data => {
+                treeData = data;
+                showButtons();
+            })
+            .catch(err => alert('数据加载失败，请检查 data.json 文件'));
+
+        function getChildren() {
+            let depth = currentPath.length;
+            if (depth === 0) return treeData.level1 || [];
+            if (depth === 1) return treeData.level2[currentPath[0]] || [];
+            if (depth === 2) {
+                let key = currentPath[0] + '||' + currentPath[1];
+                return treeData.level3[key] || [];
+            }
+            if (depth === 3) {
+                let key = currentPath[0] + '||' + currentPath[1] + '||' + currentPath[2];
+                return treeData.level4[key] || [];
+            }
+            return [];
+        }
+
+        function showButtons() {
+            let container = document.getElementById('btnContainer');
+            container.innerHTML = '';
+
+            // 返回按钮
+            if (currentPath.length > 0) {
+                let backBtn = document.createElement('button');
+                backBtn.className = 'back-btn';
+                backBtn.textContent = '← 返回';
+                backBtn.onclick = () => {
+                    currentPath.pop();
+                    showButtons();
+                };
+                document.body.appendChild(backBtn);
+            } else {
+                let oldBack = document.querySelector('.back-btn');
+                if (oldBack) oldBack.remove();
+            }
+
+            let children = getChildren();
+            if (children.length === 0) {
+                let tip = document.createElement('div');
+                tip.className = 'tip';
+                tip.textContent = '（无更多选项）';
+                container.appendChild(tip);
+                return;
+            }
+
+            children.forEach(item => {
+                let btn = document.createElement('button');
+                btn.className = 'menu-btn';
+                btn.textContent = item;
+                btn.onclick = () => {
+                    if (currentPath.length === 3) {
+                        // 第四级：显示内容
+                        let key = currentPath[0] + '||' + currentPath[1] + '||' + currentPath[2] + '||' + item;
+                        let content = treeData.Content[key] || '（暂无详细内容）';
+                        alert(content);
+                    } else {
+                        currentPath.push(item);
+                        showButtons();
+                    }
+                };
+                container.appendChild(btn);
+            });
+        }
+    </script>
+</body>
+</html>
